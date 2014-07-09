@@ -1,0 +1,81 @@
+{
+
+    // JShint
+    "passfail"    : false, // if the scan should stop on first error
+
+    // Tolerate features
+    "eqnull"      : false, // if == null comparisons should be tolerated
+    "sub"         : true, // if all forms of subscript notation are tolerated
+    "asi"         : false, // if automatic semicolon insertion should be tolerated
+    "scripturl"   : false, // if script-targeted URLs should be tolerated
+    "shadow"      : false, // if variable shadowing should be tolerated
+    "smarttabs"   : false, // if smarttabs should be tolerated (http://www.emacswiki.org/emacs/SmartTabs)
+    "supernew"    : false, // if `new function () { ... };` and `new Object;` should be tolerated
+
+    // Required
+    "strict"      : false, // require the "use strict"; pragma
+    "curly"       : true, // if curly braces around all blocks should be required
+    "eqeqeq"      : true, // if === should be required
+
+    // Define Environments
+    "node"        : true, // if the Node.js environment globals should be predefined
+    "nonstandard" : false, // if non-standard (but widely adopted) globals should be predefined
+    "couch"       : false, // if CouchDB globals should be predefined
+    "devel"       : false, // if logging globals should be predefined (console,// alert, etc.)
+    "browser"     : false, // if the standard browser globals should be predefined
+    "dojo"        : false, // if Dojo Toolkit globals should be predefined
+    "rhino"       : false, // if the Rhino environment globals should be predefined
+    "jquery"      : false, // if jQuery globals should be predefined
+    "mootools"    : false, // if MooTools globals should be predefined
+    "prototypejs" : false, // if Prototype and Scriptaculous globals should be predefined
+    "wsh"         : false, // if the Windows Scripting Host environment globals should be predefined 
+
+    // Allow features
+    "expr"        : true, // if ExpressionStatement should be allowed as Programs
+    "loopfunc"    : true, // if functions should be allowed to be defined within loops
+    "onecase"     : true, // if one case switch statements should be allowed
+    "boss"        : false, // if advanced usage of assignments should be allowed
+    "debug"       : false, // if debugger statements should be allowed
+    "es5"         : false, // if ES5 syntax should be allowed
+    "esnext"      : false, // if es.next specific syntax should be allowed
+    "evil"        : false, // if eval should be allowed
+    "globalstrict": false, // if global "use strict"; should be allowed (also // enables 'strict')
+    "proto"       : false, // if the `__proto__` property should be allowed
+    "iterator"    : false, // if the `__iterator__` property should be allowed
+
+    // Disallow certain features
+    "nonew"       : true, // if using `new` for side-effects should be disallowed
+    "latedef"     : "nofunc", // if the use before definition should not be tolerated
+    "laxbreak"    : true, // if line breaks should not be checked
+    "regexp"      : true, // if the . should not be allowed in regexp literals
+    "noarg"       : true, // if arguments.caller and arguments.callee should be disallowed
+    "noempty"     : true, // if empty blocks should be disallowed
+    "bitwise"     : false, // if bitwise operators should not be allowed
+    "plusplus"    : false, // if increment/decrement should not be allowed
+
+    // Functions
+    "funcscope"   : true, // if only function scope should be used for scope tests
+    "onevar"      : false, // if only one var statement per function should be
+    "unused"      : "vars",
+    "validthis"   : true, // if 'this' inside a non-constructor function is valid This is a function scoped option only.
+
+    // Loops
+    "forin"       : false, // if for in statements must filter
+
+    // Names
+    "newcap"      : true, // if constructor names must be capitalized
+    "nomen"       : false, // if names should be checked
+
+    // General
+    "undef"       : true, // if variables should be declared before used
+    "regexdash"   : true, // if unescaped first/last dash (-) inside brackets
+    "immed"       : true, // if immediate invocations must be wrapped in parens
+
+    // Whitespace and Syntax
+    "trailing"    : true, // if trailing whitespace rules apply
+    "multistr"    : false, // allow multiline strings
+    "white"       : false, // if strict whitespace rules apply
+    "lastsemic"   : false  // if semicolons may be ommitted for the trailing  statements inside of a one-line blocks.
+}
+
+
