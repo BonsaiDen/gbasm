@@ -11,6 +11,7 @@ var TOKEN_NONE = 0,
     TOKEN_NAME = 9;
 
 function Lexer(source) {
+    this.source = source;
     this.tokens = [];
     this.line = 0;
     this.col = 0;
@@ -23,7 +24,7 @@ function Lexer(source) {
 Lexer.prototype = {
 
     getStream: function() {
-        return new TokenStream(this.tokens);
+        return new TokenStream(this.tokens, this.source);
     },
 
     parse: function(source) {
@@ -35,7 +36,8 @@ Lexer.prototype = {
             skip = false,
             isNegative = false,
             delimiter = '',
-            value = '';
+            value = '',
+            isNewline = false;
 
         while(index < length + 1) {
 
@@ -47,11 +49,15 @@ Lexer.prototype = {
 
             // Update line and col
             if (c === '\r' || c === '\n') {
+                isNewline = true;
+                this.line = line;
+                this.col = col;
                 line++;
                 col = 0;
 
             } else {
                 col++;
+                isNewline = false;
             }
 
             // check for continations
@@ -125,7 +131,7 @@ Lexer.prototype = {
                     } else if (c === ':') {
                         skip = true;
                         if (!this.name(value, true)) {
-                            throw new TypeError('Invalid label name ' + value + ' at line ' + line + ', col ' + col);
+                            this.error('invalid label name ' + value, null, line, col);
                         }
 
                     } else {
@@ -185,7 +191,7 @@ Lexer.prototype = {
                         this.token('OFFSET', '+');
 
                     } else {
-                        throw new TypeError('Expected direction specifier for OFFSET at line ' + line + ', col ' + col);
+                        this.error(c, 'direction specifier (- or +) for @', this.line, this.col);
                     }
                     break;
 
@@ -193,6 +199,11 @@ Lexer.prototype = {
 
             // We matched a character for the current token
             if (skip || this.mode !== TOKEN_NONE) {
+                continue;
+
+            // Insert newline tokens with the correct line / col
+            } else if (isNewline) {
+                this.token('NEWLINE', c);
                 continue;
 
             // We added a new token or we don't have one yet
@@ -203,9 +214,6 @@ Lexer.prototype = {
 
                 // Ignore whitespace
                 if (isWhitespace(c)) {
-                    //if (c === '\n' || c === '\r') {
-                    //    this.token('NEWLINE', c);
-                    //}
                     continue;
 
                 // Check for the beginning of a comment
@@ -254,7 +262,7 @@ Lexer.prototype = {
                 // Check for the beginning of a name
                 } else if (isNameStart(c)) {
                     this.mode = TOKEN_NAME;
-                    value = c;
+                    value = raw;
 
                 // Check for the beginning of a operator
                 } else if (isOperator(c)) {
@@ -278,7 +286,7 @@ Lexer.prototype = {
                     break;
 
                 } else {
-                    throw new TypeError('Unexpected character at line ' + line + ', col ' + col);
+                    this.error('character "' + c + '"', null, this.line, this.col);
                 }
 
             }
@@ -322,7 +330,7 @@ Lexer.prototype = {
                     this.expression.push(token);
                     this.parenLevel--;
                     if (this.parenLevel < 0) {
-                        throw new TypeError('Unexpected RPAREN at line ' + token.line + ', col ' + token.col);
+                        this.error('closing )', null, token.line, token.col);
                     }
                     break;
 
@@ -333,25 +341,33 @@ Lexer.prototype = {
             if (this.expression.length) {
 
                 if (this.parenLevel !== 0) {
-                    throw new TypeError('Unexpected ' + next.type + ' at line ' + token.line + ', col ' + token.col + ' expected LPAREN.');
+                    this.error(next.type, 'closing )', next.line, next.col);
 
                 // Parse the final expression
                 } else if (this.expression.length > 1) {
 
-                    // Remove the expression tokens from the token stream
-                    this.tokens.splice(this.tokens.length - this.expression.length, this.expression.length);
+                    // If we end with an operator the expression is invalid
+                    if (this.expression[this.expression.length - 1].type === 'OPERATOR') {
+                        this.error('unbound operator', 'expression value', token.line, token.col);
 
-                    // Insert a expression token
-                    this.tokens.push({
-                        type: 'EXPRESSION',
-                        value: this.expression.slice(),
-                        line: this.expression[0].line,
-                        col: this.expression[0].col
-                    });
+                    } else {
+
+                        // Remove the expression tokens from the token stream
+                        this.tokens.splice(this.tokens.length - this.expression.length, this.expression.length);
+
+                        // Insert a expression token
+                        this.tokens.push({
+                            type: 'EXPRESSION',
+                            value: this.expression.slice(),
+                            line: this.expression[0].line,
+                            col: this.expression[0].col
+                        });
+
+                    }
 
                 // In case of a single token expression check if it is actually valid
                 } else if (token.type !== 'NAME' && token.type !== 'NUMBER') {
-                    throw new TypeError('Unexpected ' + token.type + ' at line ' + token.line + ', col ' + token.col);
+                    this.error(token.type, 'expression', token.line, token.col);
                 }
 
                 this.expression.length = 0;
@@ -369,7 +385,7 @@ Lexer.prototype = {
 
             // We require a number here
             if (type !== 'NUMBER') {
-                throw new TypeError('Expected NUMBER after @' + this.lastToken.value + ' at line ' + this.lastToken.line + ', col ' + this.lastToken.col);
+                this.error(type, 'a number after @' + this.lastToken.value, this.line, this.col);
 
             } else {
                 this.lastToken.type = 'OFFSET_LABEL';
@@ -454,6 +470,17 @@ Lexer.prototype = {
                 }
                 break;
 
+            case 'DB':
+            case 'DW':
+            case 'DS':
+            case 'EQU':
+            case 'EQUS':
+            case 'SECTION':
+            case 'INCLUDE':
+            case 'INCBIN':
+                this.token('MACRO', value);
+                break;
+
             default:
                 this.token(isLabel ? 'LABEL_GLOBAL_DEF' : 'NAME', value);
                 break;
@@ -461,103 +488,28 @@ Lexer.prototype = {
 
         return true;
 
-    }
+    },
+
+    error: error
 
 };
 
 module.exports = Lexer;
 
 
-// Helper ---------------------------------------------------------------------
-function isNameStart(c) {
-    return c !== '' && 'abcedfghijklmnopqrstuvwxyz_'.indexOf(c) !== -1;
-}
-
-function isName(c) {
-    return c !== '' && 'abcedfghijklmnopqrstuvwxyz_0123456789'.indexOf(c) !== -1;
-}
-
-function isWhitespace(c) {
-    return c === ' ' || c === '\n' || c === '\r' || c === '\t' || c === '\v';
-}
-
-function isDigit(c) {
-    return c === '0' || c === '1' || c === '2' || c === '3'
-        || c === '4' || c === '5' || c === '6' || c === '7'
-        || c === '8' || c === '9';
-}
-
-function isDecimal(c) {
-    return isDigit(c);
-}
-
-function isHex(c) {
-    return isDigit(c) || c === 'a' || c === 'b' || c === 'c'
-        || c === 'd' || c === 'e' || c === 'f';
-}
-
-function isBinary(c) {
-    return c === '0' || c === '1';
-}
-
-function isPunctuation(c) {
-    return c === '[' || c === ']' || c === ',';
-}
-
-function isOperator(c) {
-    return c !== '' && '+-*/><|&^~!%'.indexOf(c) !== -1;
-}
-
-function isExpression(token, next) {
-
-    var valid = {
-
-        'LPAREN': {
-            'NAME': true,
-            'NUMBER': true,
-            'OPERATOR': true,
-            'LPAREN': true,
-            'RPAREN': true
-        },
-
-        'RPAREN': {
-            'RPAREN': true,
-            'OPERATOR': true
-        },
-
-        'OPERATOR': {
-            'LPAREN': true,
-            'NUMBER': true,
-            'NAME': true
-        },
-
-        'NUMBER': {
-            'RPAREN': true,
-            'OPERATOR': true
-        },
-
-        'NAME': {
-            'RPAREN': true,
-            'OPERATOR': true
-        }
-
-    }[token.type];
-
-    return valid ? (valid[next.type] || false) : false;
-
-}
-
-
 // Token Stream Interface -----------------------------------------------------
 // ----------------------------------------------------------------------------
-function TokenStream(tokens) {
+function TokenStream(tokens, source) {
+    this.source = source;
+    this.tokens = tokens;
     this.token = null;
     this.last = null;
-    this.tokens = tokens;
     this.index = 0;
 }
 
 TokenStream.prototype = {
+
+    error: error,
 
     next: function() {
         this.index++;
@@ -576,14 +528,14 @@ TokenStream.prototype = {
 
     expect: function(type) {
 
-        if (!this.token) {
-            throw new TypeError('Unexpected end of input at line ' + this.last.line + ', col ' + this.last.col + ' expected ' + type);
+        if (!this.token || type === 'EOF') {
+            this.error('end of input', type, this.last.line, this.last.col);
 
         } else if (this.is(type, this.token)) {
             return this.value(type, this.next());
 
         } else {
-            throw new TypeError('Expected ' + type + ' at line ' + this.token.line + ', col ' + this.token.col + ' but instead got: ' + this.token.value);
+            this.error(this.value(this.token.type, this.token), type, this.last.line, this.last.col + 1);
         }
 
     },
@@ -591,7 +543,6 @@ TokenStream.prototype = {
     value: function(type, token) {
 
         switch(type) {
-            // TODO remove all of these!
             case 'ACCUMULATOR':
                 return 'a';
 
@@ -625,8 +576,11 @@ TokenStream.prototype = {
             case 'ZERO_PAGE_LOCATION':
                 return token.value;
 
+            case 'NEWLINE':
+                return 'NEWLINE';
+
             default:
-                return null;
+                return type;
 
         }
 
@@ -708,4 +662,104 @@ TokenStream.prototype = {
     }
 
 };
+
+
+// Helper ---------------------------------------------------------------------
+function error(msg, expected, line, col) {
+
+    var message = 'Unexpected ' + msg;
+    message += ' at line ' + line + ', col ' + col;
+
+    if (expected) {
+        message += ', expected ' + expected + ' instead';
+    }
+
+    message += ':';
+
+    var row = this.source.split(/[\n\r]/)[line - 1],
+        pointer = new Array(col + 1).join(' ') + '^';
+
+    console.log(message + '\n\n    ' + row + '\n    ' + pointer);
+
+    throw new TypeError(message);
+
+}
+
+function isNameStart(c) {
+    return c !== '' && 'abcedfghijklmnopqrstuvwxyz_'.indexOf(c) !== -1;
+}
+
+function isName(c) {
+    return c !== '' && 'abcedfghijklmnopqrstuvwxyz_0123456789'.indexOf(c) !== -1;
+}
+
+function isWhitespace(c) {
+    return c === ' ' || c === '\n' || c === '\r' || c === '\t' || c === '\v';
+}
+
+function isDigit(c) {
+    return c === '0' || c === '1' || c === '2' || c === '3'
+        || c === '4' || c === '5' || c === '6' || c === '7'
+        || c === '8' || c === '9';
+}
+
+function isDecimal(c) {
+    return isDigit(c);
+}
+
+function isHex(c) {
+    return isDigit(c) || c === 'a' || c === 'b' || c === 'c'
+        || c === 'd' || c === 'e' || c === 'f';
+}
+
+function isBinary(c) {
+    return c === '0' || c === '1';
+}
+
+function isPunctuation(c) {
+    return c === '[' || c === ']' || c === ',';
+}
+
+function isOperator(c) {
+    return c !== '' && '+-*/><|&^~!%'.indexOf(c) !== -1;
+}
+
+function isExpression(token, next) {
+
+    var valid = {
+
+        'LPAREN': {
+            'NAME': true,
+            'NUMBER': true,
+            'OPERATOR': true,
+            'LPAREN': true,
+            'RPAREN': true
+        },
+
+        'RPAREN': {
+            'RPAREN': true,
+            'OPERATOR': true
+        },
+
+        'OPERATOR': {
+            'LPAREN': true,
+            'NUMBER': true,
+            'NAME': true
+        },
+
+        'NUMBER': {
+            'RPAREN': true,
+            'OPERATOR': true
+        },
+
+        'NAME': {
+            'RPAREN': true,
+            'OPERATOR': true
+        }
+
+    }[token.type];
+
+    return valid ? (valid[next.type] || false) : false;
+
+}
 
