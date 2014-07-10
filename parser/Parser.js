@@ -38,10 +38,6 @@ Parser.prototype = {
         while((this._token = this.stream.next())) {
 
             switch(this._token.type) {
-                case 'LABEL':
-                    this.labels.push(new Label(this._token, this._offset));
-                    break;
-
                 case 'INSTRUCTION':
                     this.parseInstruction(this.stream, this._token.value.toLowerCase());
                     break;

@@ -9,5 +9,5 @@ function compile(base, file) {
     //console.log(p.list());
 }
 
-compile('test', 'ops.gb.s');
+compile('test', 'expr.gb.s');
 

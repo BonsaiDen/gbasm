@@ -15,6 +15,8 @@ function Lexer(source) {
     this.line = 0;
     this.col = 0;
     this.mode = TOKEN_NONE;
+    this.expression = [];
+    this.parenLevel = 0;
     this.parse(source);
 }
 
@@ -122,7 +124,9 @@ Lexer.prototype = {
 
                     } else if (c === ':') {
                         skip = true;
-                        this.name(value, true);
+                        if (!this.name(value, true)) {
+                            throw new TypeError('Invalid label name ' + value + ' at line ' + line + ', col ' + col);
+                        }
 
                     } else {
                         this.name(value, false);
@@ -181,7 +185,7 @@ Lexer.prototype = {
                         this.token('OFFSET', '+');
 
                     } else {
-                        throw new TypeError('Expected direction specifier for relative label.');
+                        throw new TypeError('Expected direction specifier for OFFSET at line ' + line + ', col ' + col);
                     }
                     break;
 
@@ -199,6 +203,9 @@ Lexer.prototype = {
 
                 // Ignore whitespace
                 if (isWhitespace(c)) {
+                    //if (c === '\n' || c === '\r') {
+                    //    this.token('NEWLINE', c);
+                    //}
                     continue;
 
                 // Check for the beginning of a comment
@@ -254,6 +261,13 @@ Lexer.prototype = {
                     this.mode = TOKEN_OPERATOR;
                     value = c;
 
+                // Check for Parenthesis
+                } else if (c === '(') {
+                    this.token('LPAREN', c);
+
+                } else if (c === ')') {
+                    this.token('RPAREN', c);
+
                 // Check for punctuation
                 } else if (isPunctuation(c)) {
                     this.token('PUNCTUATION', c);
@@ -264,14 +278,87 @@ Lexer.prototype = {
                     break;
 
                 } else {
-                    throw new TypeError('Unexpected character: ' + c);
+                    throw new TypeError('Unexpected character at line ' + line + ', col ' + col);
                 }
 
             }
 
         }
 
+        console.log(this.tokens);
         return this.tokens;
+
+    },
+
+    expr: function(token, next) {
+
+        if (isExpression(token, next)) {
+
+            this.expression.push(token);
+
+            switch(token.type) {
+                case 'LPAREN':
+                    this.parenLevel++;
+                    break;
+
+                case 'RPAREN':
+                    this.parenLevel--;
+                    break;
+            }
+
+        } else {
+
+            switch(token.type) {
+                case 'NUMBER':
+                case 'NAME':
+                    this.expression.push(token);
+                    break;
+
+                case 'OPERATOR':
+                    this.expression.push(token);
+                    break;
+
+                case 'RPAREN':
+                    this.expression.push(token);
+                    this.parenLevel--;
+                    if (this.parenLevel < 0) {
+                        throw new TypeError('Unexpected RPAREN at line ' + token.line + ', col ' + token.col);
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+
+            if (this.expression.length) {
+
+                if (this.parenLevel !== 0) {
+                    throw new TypeError('Unexpected ' + next.type + ' at line ' + token.line + ', col ' + token.col + ' expected LPAREN.');
+
+                // Parse the final expression
+                } else if (this.expression.length > 1) {
+
+                    // Remove the expression tokens from the token stream
+                    this.tokens.splice(this.tokens.length - this.expression.length, this.expression.length);
+
+                    // Insert a expression token
+                    this.tokens.push({
+                        type: 'EXPRESSION',
+                        value: this.expression.slice(),
+                        line: this.expression[0].line,
+                        col: this.expression[0].col
+                    });
+
+                // In case of a single token expression check if it is actually valid
+                } else if (token.type !== 'NAME' && token.type !== 'NUMBER') {
+                    throw new TypeError('Unexpected ' + token.type + ' at line ' + token.line + ', col ' + token.col);
+                }
+
+                this.expression.length = 0;
+
+            }
+
+        }
 
     },
 
@@ -282,7 +369,7 @@ Lexer.prototype = {
 
             // We require a number here
             if (type !== 'NUMBER') {
-                throw new TypeError('Expected NUMBER after @' + this.lastToken.value);
+                throw new TypeError('Expected NUMBER after @' + this.lastToken.value + ' at line ' + this.lastToken.line + ', col ' + this.lastToken.col);
 
             } else {
                 this.lastToken.type = 'OFFSET_LABEL';
@@ -291,12 +378,17 @@ Lexer.prototype = {
 
         } else {
 
+            var prev = this.lastToken;
             this.lastToken = {
                 type: type,
                 value: value,
                 line: this.line,
                 col: this.col
             };
+
+            if (prev) {
+                this.expr(prev, this.lastToken);
+            }
 
             this.tokens.push(this.lastToken);
 
@@ -355,7 +447,7 @@ Lexer.prototype = {
             case 'swap':
             case 'xor':
                 if (isLabel) {
-                    throw new TypeError('Invalid label name: ' + value);
+                    return false;
 
                 } else {
                     this.token('INSTRUCTION', value);
@@ -366,6 +458,8 @@ Lexer.prototype = {
                 this.token(isLabel ? 'LABEL_GLOBAL_DEF' : 'NAME', value);
                 break;
         }
+
+        return true;
 
     }
 
@@ -411,9 +505,47 @@ function isPunctuation(c) {
 }
 
 function isOperator(c) {
-    return c !== '' && '+-*/><|&^~!%()'.indexOf(c) !== -1;
+    return c !== '' && '+-*/><|&^~!%'.indexOf(c) !== -1;
 }
 
+function isExpression(token, next) {
+
+    var valid = {
+
+        'LPAREN': {
+            'NAME': true,
+            'NUMBER': true,
+            'OPERATOR': true,
+            'LPAREN': true,
+            'RPAREN': true
+        },
+
+        'RPAREN': {
+            'RPAREN': true,
+            'OPERATOR': true
+        },
+
+        'OPERATOR': {
+            'LPAREN': true,
+            'NUMBER': true,
+            'NAME': true
+        },
+
+        'NUMBER': {
+            'RPAREN': true,
+            'OPERATOR': true
+        },
+
+        'NAME': {
+            'RPAREN': true,
+            'OPERATOR': true
+        }
+
+    }[token.type];
+
+    return valid ? (valid[next.type] || false) : false;
+
+}
 
 
 // Token Stream Interface -----------------------------------------------------
@@ -547,7 +679,6 @@ TokenStream.prototype = {
                 return token.type === 'NUMBER' && value >= 0 && value <= 7;
 
             case 'NUMBER_16BIT':
-                // TODO resolve stuff later on...
                 return token.type === 'LABEL' || token.type === 'EXPRESSION' || token.type === 'NAME' || token.type === 'NUMBER';
 
             case 'FLAG':
