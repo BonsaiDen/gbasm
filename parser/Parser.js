@@ -3,7 +3,7 @@
 var Constant = require('./Constant'),
     Expression = require('./Expression'),
     Label = require('./Label'),
-    TokenStream = require('./TokenStream');
+    Lexer = require('./Lexer');
 
 
 // Assembly Code Parser -------------------------------------------------------
@@ -13,7 +13,8 @@ function Parser(file, base, source, offset) {
     var start = Date.now();
     this.file = file;
     this.base = base;
-    this.stream = new TokenStream(source);
+    this.lexer = new Lexer(source);
+    this.stream = this.lexer.getStream();
 
     this.instructions = [];
     this.labels = [];
@@ -36,7 +37,7 @@ Parser.prototype = {
         var start = Date.now();
         while((this._token = this.stream.next())) {
 
-            switch(this._token.id) {
+            switch(this._token.type) {
                 case 'LABEL':
                     this.labels.push(new Label(this._token, this._offset));
                     break;
