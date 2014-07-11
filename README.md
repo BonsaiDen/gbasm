@@ -18,3 +18,17 @@ Upcoming features:
 
 Licensed under MIT.
 
+
+Compiler
+    SourceFile
+        Parser
+            Lexer
+            TokenStream
+
+    SourceFile
+        Parser
+            Lexer
+            TokenStream
+
+    Linker
+        
