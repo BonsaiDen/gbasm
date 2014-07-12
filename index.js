@@ -1,6 +1,7 @@
 // Dependencies ---------------------------------------------------------------
 // ----------------------------------------------------------------------------
 var Troll = require('troll-opt').Troll,
+    fs = require('fs'),
     Compiler = require('./lib/Compiler');
 
 
@@ -28,7 +29,14 @@ var c = new Compiler(),
 
 // Mode -----------------------------------------------------------------------
 if (argv.length) {
+
     c.compile(argv);
     c.link();
+    fs.writeFileSync(opts.outfile, c.generate());
+
+    // TODO generate list map and symfiles
+    // TODO respect silent flag
+    // TODO implement additional compiler warnings
+
 }
 
