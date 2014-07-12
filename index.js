@@ -29,5 +29,6 @@ var c = new Compiler(),
 // Mode -----------------------------------------------------------------------
 if (argv.length) {
     c.compile(argv);
+    c.link();
 }
 
