@@ -13,15 +13,15 @@
              --help: Display this help text
 ```
 
-## Implementation Status
+### Implementation Status
 
-Code and ROM genration are working, although there might still be some edge cases 
+Code and ROM generation are working, although there might still be some edge cases 
 were things fall apart.
  
 The following things are not completely implemented at the moment:
 
 - Mapfile generation is missing
-- The verbose, stdout and silent flags do nothing
+- The verbose, `stdout` and silent flags do nothing
 - Some error do not yet have full compiler errors and will simply throw `TypeError`
 - There are no additional compiler warnings at the moment
 - The NPM module does not yet provide a binary interface
