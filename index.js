@@ -27,31 +27,24 @@ var opts = troll.options(function(troll) {
 var c = new Compiler(),
     argv = troll.argv();
 
+
 // Mode -----------------------------------------------------------------------
 if (argv.length) {
-
-    console.log(opts);
 
     c.compile(argv);
     c.link();
 
-    var a = c.generate();
     //c.optimize();
 
-    var b = c.generate();
-    //console.log(c.symbols());
-    console.log(a.slice(0x200));
-    console.log(b.slice(0x200));
-    fs.writeFileSync(opts.outfile, a);
+    fs.writeFileSync(opts.outfile, c.generate());
 
     if (opts.symfile) {
-        var symbols = c.symbols();
-        //console.log(symbols);
-        fs.writeFileSync(opts.symfile, symbols);
+        fs.writeFileSync(opts.symfile, c.symbols());
     }
 
     // TODO generate list map and symfiles
     // TODO respect silent flag
+    // TODO respect stdout flag
     // TODO implement additional compiler warnings
 
 }
