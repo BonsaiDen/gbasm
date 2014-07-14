@@ -32,7 +32,6 @@ var c = new Compiler(),
 if (argv.length) {
 
     c.compile(argv);
-    c.link();
 
     //c.optimize();
 
