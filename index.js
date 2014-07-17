@@ -24,13 +24,13 @@ var opts = troll.options(function(troll) {
 
 });
 
-var c = new Compiler(),
-    argv = troll.argv();
+var argv = troll.argv();
 
 
 // Mode -----------------------------------------------------------------------
 if (argv.length) {
 
+    var c = new Compiler();
     c.compile(argv);
 
     //c.optimize();
