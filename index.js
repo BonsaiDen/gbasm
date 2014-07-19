@@ -24,8 +24,8 @@ var opts = cmd.options(function(troll) {
 
 });
 
-    // TODO respect silent flag
-    // TODO implement additional compiler warnings
+// TODO respect silent flag
+// TODO implement additional compiler warnings
 
 var argv = cmd.argv();
 if (argv.length) {

@@ -2,23 +2,35 @@
   "name": "gbasm",
   "version": "0.0.1",
   "description": "A GameBoy Assembler.",
+  "keywords": [
+    "gameboy",
+    "assembler",
+    "z80",
+    "intel",
+    "8080",
+    "assembly"
+  ],
   "main": "index.js",
-  "directories": {
-    "test": "test"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "files": [
+    "bin",
+    "lib",
+    "index.js",
+    "Makefile",
+    "README.md",
+    "LICENSE"
+  ],
+  "bin": "./bin/gbasm",
   "repository": {
     "type": "git",
     "url": "git://github.com/BonsaiDen/gbasm.js.git"
   },
-  "author": "Ivo Wetzel",
+  "author": "Ivo Wetzel <ivo.wetzel@googlemail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/BonsaiDen/gbasm.js/issues"
   },
   "dependencies": {
-    "troll-opt": "~0.7.1"
+    "troll-opt": "~0.7.1",
+    "colors": "~0.6.2"
   }
 }
