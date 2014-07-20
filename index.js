@@ -14,7 +14,7 @@ var opts = cmd.options(function(troll) {
 
     troll.opt('outfile', 'The name of the output rom file', { short: 'o', default: 'game.gb' });
     troll.opt('listfile', 'Name of the assembly listing file to be generated', { short: 'l' });
-    troll.opt('mapfile', 'Name of the ROM mapping file to be generated', { short: 'm' });
+    troll.opt('mapfile', 'Name of the ROM mapping file to be generated', { short: 'm', default: '' });
     troll.opt('symfile', 'Name of the symbol map file to be generated', { short: 's', default: '' });
     troll.opt('silent', 'Do not produce any logging output', { short: 'S', default: false });
     troll.opt('optimize', 'Set optimization level', { short: 'O', default: 0 });
@@ -66,6 +66,7 @@ if (argv.length) {
 
         var mapping = c.mapping();
         if (opts.mapfile === 'stdout') {
+            process.stdout.write(mapping);
 
         } else {
             fs.writeFileSync(opts.mapfile, mapping);
