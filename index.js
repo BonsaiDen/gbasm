@@ -24,8 +24,6 @@ var opts = cmd.options(function(troll) {
 
 });
 
-// TODO respect silent flag
-// TODO implement additional compiler warnings
 
 var argv = cmd.argv();
 if (argv.length) {
@@ -50,29 +48,27 @@ if (argv.length) {
 
     // Generate symbol file
     if (opts.symfile) {
-
-        var symbols = c.symbols();
         if (opts.symfile === 'stdout') {
-            process.stdout.write(symbols);
+            process.stdout.write(c.symbols(true));
 
         } else {
-            fs.writeFileSync(opts.symfile, symbols);
+            fs.writeFileSync(opts.symfile, c.symbols(false));
         }
-
     }
 
     // Generate
     if (opts.mapfile) {
-
-        var mapping = c.mapping();
         if (opts.mapfile === 'stdout') {
-            process.stdout.write(mapping);
+            process.stdout.write(c.mapping(true));
 
         } else {
-            fs.writeFileSync(opts.mapfile, mapping);
+            fs.writeFileSync(opts.mapfile, c.mapping(false));
         }
-
     }
+
+} else if (opts.version) {
+    var json = JSON.parse(fs.readFileSync('./package.json').toString());
+    process.stdout.write(json.name + ' v' + json.version + '\n');
 
 } else {
     cmd.usage();
