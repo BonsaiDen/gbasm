@@ -44,7 +44,7 @@
     "iterator"    : false, // if the `__iterator__` property should be allowed
 
     // Disallow certain features
-    "nonew"       : true, // if using `new` for side-effects should be disallowed
+    "nonew"       : false, // if using `new` for side-effects should be disallowed
     "latedef"     : "nofunc", // if the use before definition should not be tolerated
     "laxbreak"    : true, // if line breaks should not be checked
     "regexp"      : true, // if the . should not be allowed in regexp literals
