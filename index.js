@@ -10,10 +10,8 @@ var troll = require('troll-opt'),
 var cmd = new troll.Troll();
 var opts = cmd.options(function(troll) {
 
-    troll.banner('A modern Gameboy Assembler');
-
+    troll.banner('A JavaScript Gameboy Assembler');
     troll.opt('outfile', 'The name of the output rom file', { short: 'o', default: 'game.gb' });
-    troll.opt('listfile', 'Name of the assembly listing file to be generated', { short: 'l' });
     troll.opt('mapfile', 'Name of the ROM mapping file to be generated', { short: 'm', default: '' });
     troll.opt('symfile', 'Name of the symbol map file to be generated', { short: 's', default: '' });
     troll.opt('silent', 'Do not produce any logging output', { short: 'S', default: false });
@@ -66,11 +64,15 @@ if (argv.length) {
         }
     }
 
+
 } else if (opts.version) {
+    // Version Information
     var json = JSON.parse(fs.readFileSync('./package.json').toString());
     process.stdout.write(json.name + ' v' + json.version + '\n');
 
+
 } else {
+    // Usage
     cmd.usage();
 }
 

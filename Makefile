@@ -1,7 +1,7 @@
 # Build
 rom: 
 	@mkdir -p build
-	@node index.js -o build/game.gb -s build/game.sym -m stdout tuff/src/main.gb.s
+	@node index.js -o build/game.gb -s build/game.sym tuff/src/main.gb.s
 
 # Emulation
 run: rom
