@@ -1,6 +1,6 @@
 {
   "name": "gbasm",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A GameBoy Assembler.",
   "keywords": [
     "gameboy",
@@ -22,12 +22,12 @@
   "bin": "./bin/gbasm",
   "repository": {
     "type": "git",
-    "url": "git://github.com/BonsaiDen/gbasm.js.git"
+    "url": "git://github.com/BonsaiDen/gbasm.git"
   },
   "author": "Ivo Wetzel <ivo.wetzel@googlemail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/BonsaiDen/gbasm.js/issues"
+    "url": "https://github.com/BonsaiDen/gbasm/issues"
   },
   "dependencies": {
     "troll-opt": "~0.7.1",
