@@ -31,7 +31,7 @@ Usage: gbasm [options] files
 
 ### Compatibility Notes
 
-**gbasm** is mostly compatible with [rgbss](https://github.com/bentley/rgbds) 
+**gbasm** is mostly compatible with [rgbds](https://github.com/bentley/rgbds) 
 but there are some deviations and additions:
 
 - *gbasm* is a multipass compiler, meaning the all sources files and definitions are parsed before resolving any names, which in turn means that you can reference any name as long as it is eventually defined by a file
