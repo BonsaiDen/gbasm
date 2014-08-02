@@ -27,8 +27,8 @@ var argv = cmd.argv();
 if (argv.length) {
 
     // Compile
-    var c = new Compiler();
-    c.compile(argv, opts.silent);
+    var c = new Compiler(opts.silent);
+    c.compile(argv);
 
     // Optimize
     if (opts.optimize > 0) {
