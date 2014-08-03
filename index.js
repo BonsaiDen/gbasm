@@ -74,8 +74,7 @@ for(var i = 0, l = args.length; i < l; i++) {
 
 // Version Information
 if (options.version) {
-    var json = JSON.parse(fs.readFileSync('./package.json').toString());
-    process.stdout.write('v' + json.version + '\n');
+    process.stdout.write('v0.0.5\n');
 
 } else if (options.help) {
     usage();
