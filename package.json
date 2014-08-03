@@ -1,6 +1,6 @@
 {
   "name": "gbasm",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A GameBoy Assembler.",
   "keywords": [
     "gameboy",
@@ -30,7 +30,6 @@
     "url": "https://github.com/BonsaiDen/gbasm/issues"
   },
   "dependencies": {
-    "troll-opt": "~0.7.1",
     "colors": "~0.6.2"
   }
 }
