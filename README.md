@@ -9,15 +9,17 @@ and generate the Tuff.gb ROM in less than 90ms on an old Intel i5.
 
 
 ```
-Usage: gbasm [options] files
+Usage: gbasm [options] [sources]
 
-   --mapfile, -m <s>: Name of the ROM mapping file to be generated (default: none)
-  --optimize, -O <n>: Set optimization level (default: 0)
    --outfile, -o <s>: The name of the output rom file (default: game.gb)
-        --silent, -S: Do not produce any logging output (default: false)
-   --symfile, -s <s>: Name of the symbol map file to be generated (default: none)
-       --version, -V: Version information (default: false)
-              --help: Display this help text
+      --optimize, -O: Enable instruction optimizations
+   --mapfile, -m <s>: Generates a ASCII overview of the mapped ROM space
+   --symfile, -s <s>: Generates a symbol map compatible with debuggers
+  --jsonfile, -j <s>: Generates a JSON data dump of all sections with their data, labels, instructions etc.
+        --silent, -S: Surpresses all logging
+       --verbose, -v: Turn on verbose logging
+       --version, -V: Displays version information
+              --help: Displays this help text
 ```
 
 

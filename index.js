@@ -12,6 +12,7 @@ var args = process.argv.slice(2),
         optimize: false,
         mapfile: null,
         symfile: null,
+        jsonfile: null,
         silent: false,
         version: false,
         verbose: false,
@@ -45,6 +46,11 @@ for(var i = 0, l = args.length; i < l; i++) {
         case '-S':
         case '--silent':
             options.silent = true;
+            break;
+
+        case '-j':
+        case '--jsonfile':
+            options.jsonfile = getString(arg, args, ++i);
             break;
 
         case '--version':
@@ -110,7 +116,7 @@ if (options.version) {
         }
     }
 
-    // Generate
+    // Generate mapping file
     if (options.mapfile) {
         if (options.mapfile === 'stdout') {
             process.stdout.write(c.mapping(true));
@@ -120,6 +126,15 @@ if (options.version) {
         }
     }
 
+    // Generate json dump file
+    if (options.jsonfile) {
+        if (options.jsonfile === 'stdout') {
+            process.stdout.write(c.json());
+
+        } else {
+            fs.writeFileSync(options.jsonfile, c.json());
+        }
+    }
 
 // Usage
 } else {
@@ -146,12 +161,13 @@ function usage() {
         '',
         '   --outfile, -o <s>: The name of the output rom file (default: game.gb)',
         '      --optimize, -O: Enable instruction optimizations',
-        '   --mapfile, -m <s>: Name of the ROM mapping file to be generated',
-        '   --symfile, -s <s>: Name of the symbol map file to be generated ',
-        '        --silent, -S: Do not produce any logging output ',
-        '       --verbose, -v: Turn on verbose logging ',
-        '       --version, -V: Display version information ',
-        '              --help: Display this help text'
+        '   --mapfile, -m <s>: Generates a ASCII overview of the mapped ROM space',
+        '   --symfile, -s <s>: Generates a symbol map compatible with debuggers',
+        '  --jsonfile, -j <s>: Generates a JSON data dump of all sections with their data, labels, instructions etc.',
+        '        --silent, -S: Surpresses all logging',
+        '       --verbose, -v: Turn on verbose logging',
+        '       --version, -V: Displays version information',
+        '              --help: Displays this help text'
     ].join('\n') + '\n');
 }
 
