@@ -28,27 +28,27 @@ Usage: gbasm [options] [sources]
 ## Output Options
 
 
-### `--outfile` / `-o` 
+#### `--outfile` / `-o` 
 
   Specifies the filename of the generated ROM image
   
   
-### `--optimize` / `-O` 
+#### `--optimize` / `-O` 
 
   Turns on assembly optimizations which are automatically performed during linkage.
   
   
-### `--mapfile` / `-m`
+#### `--mapfile` / `-m`
 
   Generates a overview of the mapped ROM areas akin to be one below
   
   
-### `--symfile` / `-s` 
+#### `--symfile` / `-s` 
 
   Generates a symbol map file for use with Debuggers (e.g. [bgb]())
   
 
-### `--jsonfile` / `-j` 
+#### `--jsonfile` / `-j` 
 
   Generates a *json* file that contains the fully linked ROM data serialized into a detailed format useable for further, custom processing.
 
