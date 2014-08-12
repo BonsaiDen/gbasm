@@ -20,6 +20,7 @@ Usage: gbasm [options] [sources]
    --symfile, -s <s>: Generates a symbol map compatible with debuggers
   --jsonfile, -j <s>: Generates a JSON data dump of all sections with their data, labels, instructions etc.
         --silent, -S: Surpresses all logging
+       --verbose, -v: Surpresses all logging
        --version, -V: Displays version information
               --help: Displays this help text
 ```
@@ -40,12 +41,12 @@ Usage: gbasm [options] [sources]
   
 #### `--mapfile` / `-m`
 
-  Generates a overview of the mapped ROM areas akin to be one below
+  Generates a ASCII overview of the mapped ROM areas.
   
   
 #### `--symfile` / `-s` 
 
-  Generates a symbol map file for use with Debuggers (e.g. [bgb]())
+  Generates a symbol map file for use with Debuggers (e.g. [bgb](http://bgb.bircd.org/))
   
 
 #### `--jsonfile` / `-j` 
