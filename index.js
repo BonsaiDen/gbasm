@@ -89,7 +89,7 @@ if (options.version) {
 } else if (options.files.length) {
 
     // Compile
-    var c = new Compiler(options.silent);
+    var c = new Compiler(options.silent, options.verbose);
     c.compile(options.files);
 
     // Optimize
