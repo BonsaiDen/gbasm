@@ -21,7 +21,7 @@ Usage: gbasm [options] [sources]
   --jsonfile, -j <s>: Generates a JSON data dump of all sections with their data, labels, instructions etc.
         --silent, -S: Surpresses all logging
        --verbose, -v: Surpresses all logging
-       --version, -V: Displays version information
+           --version: Displays version information
               --help: Displays this help text
 ```
 

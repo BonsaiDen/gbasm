@@ -98,12 +98,11 @@ if (options.version) {
     }
 
     // Generate ROM image
-    var rom = c.generate();
     if (options.outfile === 'stdout') {
-        process.stdout.write(rom);
+        process.stdout.write(c.generate());
 
     } else {
-        fs.writeFileSync(options.outfile, rom);
+        fs.writeFileSync(options.outfile, c.generate());
     }
 
     // Generate symbol file
@@ -166,7 +165,7 @@ function usage() {
         '  --jsonfile, -j <s>: Generates a JSON data dump of all sections with their data, labels, instructions etc.',
         '        --silent, -S: Surpresses all logging',
         '       --verbose, -v: Turn on verbose logging',
-        '       --version, -V: Displays version information',
+        '           --version: Displays version information',
         '              --help: Displays this help text'
     ].join('\n') + '\n');
 }
