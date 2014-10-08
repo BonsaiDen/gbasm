@@ -105,7 +105,7 @@ but there are some deviations and additions:
 	In addition to `Strings` and `Numbers`, expansion macros can also take `Registers` as their arguments.
     
     ```asm
-    MACRO ld16(@number @a, @b)
+    MACRO ld16(@number, @a, @b)
       ld @a,@number >> 8
       ld @b,@number & $ff
     ENDMACRO
