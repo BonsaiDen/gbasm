@@ -171,7 +171,7 @@ function usage() {
 }
 
 function error(message) {
-    process.stdout.write('Error: ' + message + '\n');
+    process.stderr.write('Error: ' + message + '\n');
     process.exit(1);
 }
 
