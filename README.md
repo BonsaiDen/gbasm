@@ -73,11 +73,11 @@ but there are some deviations and additions:
 ### Macros
 
 - Most of the pre-defined macros from `rgbds` are available (e.g. `COS`, `STRLWR` etc.)
-- User defined macros come in to flavors:
+- User defined macros come in two flavors:
 
   1. __Expression Macros__ 
 
-    These macros contain only a single expression statement and can be used as values everywhere a built-in macro could be used, too.
+    These macros contain only a single expression statement and can be used as values everywhere a built-in macro could be used:
 
     ```asm
     MACRO add(@a, @b)
@@ -91,7 +91,7 @@ but there are some deviations and additions:
     
   2. __Expansion Macros__ 
 
-    These are macros in the classical sense which just expand into additional assembler code.
+    These are macros in the classical sense which just expand into additional assembler code:
 
     ```asm
     MACRO header()
