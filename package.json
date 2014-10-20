@@ -15,7 +15,6 @@
     "bin",
     "lib",
     "index.js",
-    "Makefile",
     "README.md",
     "LICENSE"
   ],
