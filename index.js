@@ -80,7 +80,7 @@ for(var i = 0, l = args.length; i < l; i++) {
 
 // Version Information
 if (options.version) {
-    process.stdout.write('v0.0.12\n');
+    process.stdout.write('v0.0.13\n');
 
 } else if (options.help) {
     usage();
