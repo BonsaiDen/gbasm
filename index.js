@@ -1,6 +1,7 @@
 // Dependencies ---------------------------------------------------------------
 // ----------------------------------------------------------------------------
 var fs = require('fs'),
+    path = require('path'),
     Compiler = require('./lib/Compiler');
 
 
@@ -80,7 +81,11 @@ for(var i = 0, l = args.length; i < l; i++) {
 
 // Version Information
 if (options.version) {
-    process.stdout.write('v0.0.13\n');
+
+    var p = path.join(__dirname, 'package.json'),
+        version = JSON.parse(fs.readFileSync(p).toString()).version;
+
+    process.stdout.write('v' + version + '\n');
 
 } else if (options.help) {
     usage();
