@@ -14,6 +14,7 @@ var args = process.argv.slice(2),
         mapfile: null,
         symfile: null,
         jsonfile: null,
+        unused: false,
         silent: false,
         version: false,
         verbose: false,
@@ -52,6 +53,11 @@ for(var i = 0, l = args.length; i < l; i++) {
         case '-j':
         case '--jsonfile':
             options.jsonfile = getString(arg, args, ++i);
+            break;
+
+        case '-u':
+        case '--unused':
+            options.unused = true;
             break;
 
         case '--version':
@@ -95,11 +101,16 @@ if (options.version) {
 
     // Compile
     var c = new Compiler(options.silent, options.verbose);
-    c.compile(options.files);
+    c.compile(options.files, !options.optimize);
 
     // Optimize
     if (options.optimize) {
         c.optimize();
+    }
+
+    // Report unused labels and variables
+    if (options.unused) {
+        c.unused();
     }
 
     // Generate ROM image
