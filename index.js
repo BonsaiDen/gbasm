@@ -105,7 +105,7 @@ if (options.version) {
 
     // Optimize
     if (options.optimize) {
-        c.optimize();
+        c.optimize(false);
     }
 
     // Report unused labels and variables
