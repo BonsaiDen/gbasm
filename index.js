@@ -15,9 +15,11 @@ var args = process.argv.slice(2),
         symfile: null,
         jsonfile: null,
         unused: false,
+        unsafe: false,
         silent: false,
         version: false,
         verbose: false,
+        info: false,
         help: false,
         files: []
     };
@@ -45,6 +47,10 @@ for(var i = 0, l = args.length; i < l; i++) {
             options.symfile = getString(arg, args, ++i);
             break;
 
+        case '--info':
+            options.info = getString(arg, args, ++i);
+            break;
+
         case '-S':
         case '--silent':
             options.silent = true;
@@ -55,9 +61,12 @@ for(var i = 0, l = args.length; i < l; i++) {
             options.jsonfile = getString(arg, args, ++i);
             break;
 
-        case '-u':
         case '--unused':
             options.unused = true;
+            break;
+
+        case '--unsafe':
+            options.unsafe = true;
             break;
 
         case '--version':
@@ -93,8 +102,13 @@ if (options.version) {
 
     process.stdout.write('v' + version + '\n');
 
+// Display Help
 } else if (options.help) {
     usage();
+
+// Source String Information
+} else if (options.info !== false) {
+    process.stdout.write(Compiler.infoFromSource(options.info));
 
 // Compile Files
 } else if (options.files.length) {
@@ -105,7 +119,7 @@ if (options.version) {
 
     // Optimize
     if (options.optimize) {
-        c.optimize(false);
+        c.optimize(options.unsafe);
     }
 
     // Report unused labels and variables
@@ -176,10 +190,13 @@ function usage() {
         '',
         '   --outfile, -o <s>: The name of the output rom file (default: game.gb)',
         '      --optimize, -O: Enable instruction optimizations',
+        '            --unsafe: Turn on unsafe optimizations',
         '   --mapfile, -m <s>: Generates a ASCII overview of the mapped ROM space',
         '   --symfile, -s <s>: Generates a symbol map compatible with debuggers',
         '  --jsonfile, -j <s>: Generates a JSON data dump of all sections with their data, labels, instructions etc.',
         '        --silent, -S: Surpresses all logging',
+        '            --unused: Report unused labels and variables',
+        '          --info <s>: Parse the input string and return byte count and cycles information',
         '       --verbose, -v: Turn on verbose logging',
         '           --version: Displays version information',
         '              --help: Displays this help text'
