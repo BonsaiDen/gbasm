@@ -20,6 +20,7 @@ Usage: gbasm [options] [sources]
    --symfile, -s <s>: Generates a symbol map compatible with debuggers
   --jsonfile, -j <s>: Generates a JSON data dump of all sections with their data, labels, instructions etc.
         --silent, -S: Surpresses all logging
+         --debug, -d: Enable support for custom "msg" debug opcodes',
        --verbose, -v: Surpresses all logging
            --version: Displays version information
               --help: Displays this help text
@@ -29,27 +30,39 @@ Usage: gbasm [options] [sources]
 ## Output Options
 
 
-#### `--outfile` / `-o` 
+- __ `--outfile` / `-o` __
 
-  Specifies the filename of the generated ROM image
+  Specifies the filename of the generated ROM image.
   
   
-#### `--optimize` / `-O` 
+- __ `--optimize` / `-O` __
 
   Turns on assembly optimizations which are automatically performed during linkage.
   
   
-#### `--mapfile` / `-m`
+- __ `--mapfile` / `-m`__
 
   Generates a ASCII overview of the mapped ROM areas.
   
   
-#### `--symfile` / `-s` 
+- __ `--symfile` / `-s` __
 
   Generates a symbol map file for use with Debuggers (e.g. [bgb](http://bgb.bircd.org/))
   
 
-#### `--jsonfile` / `-j` 
+- __ `--debug` / `-d` __
+
+  Enables support for custom `msg` opcodes for use with Debuggers (e.g. [bgb](http://bgb.bircd.org/))
+
+  ```asm
+  ; This will log "Debug Message" when run in the debugger
+  msg "Debug Message"
+  ```
+  
+  > Note: The `msg` opcode will be ignored when compiling without the flag.
+
+
+- __ `--jsonfile` / `-j` __
 
   Generates a *json* file that contains the fully linked ROM data serialized into a detailed format useable for further, custom processing.
 
@@ -62,7 +75,8 @@ but there are some deviations and additions:
 
 ### General
 
-- *gbasm* is a multipass compiler, meaning the all sources files and definitions are parsed before resolving any names or sizes. 
+- *gbasm* is a multipass compiler, meaning the all sources files and definitions 
+are parsed before resolving any names or sizes. 
 
 ### Syntax 
 

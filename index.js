@@ -78,6 +78,11 @@ for(var i = 0, l = args.length; i < l; i++) {
             options.verbose = true;
             break;
 
+        case '-d':
+        case '--debug':
+            options.debug = true;
+            break;
+
         case '--help':
             options.help = true;
             break;
@@ -114,7 +119,7 @@ if (options.version) {
 } else if (options.files.length) {
 
     // Compile
-    var c = new Compiler(options.silent, options.verbose);
+    var c = new Compiler(options.silent, options.verbose, options.debug);
     c.compile(options.files, !options.optimize);
 
     // Optimize
@@ -195,6 +200,7 @@ function usage() {
         '   --symfile, -s <s>: Generates a symbol map compatible with debuggers',
         '  --jsonfile, -j <s>: Generates a JSON data dump of all sections with their data, labels, instructions etc.',
         '        --silent, -S: Surpresses all logging',
+        '         --debug, -d: Enable support for custom "msg" debug opcodes',
         '            --unused: Report unused labels and variables',
         '          --info <s>: Parse the input string and return byte count and cycles information',
         '       --verbose, -v: Turn on verbose logging',
