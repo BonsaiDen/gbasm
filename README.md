@@ -127,6 +127,95 @@ are parsed before resolving any names or sizes.
     ld16($1234, b, c); turns into ld b,$12 and ld c,$34
     ```
 
+### Instructions
+
+**gbasm** supports additional meta instructions at the source code level, which will be compiled down to multiple native instructions.
+
+These aim at increasing the readability of the source.
+
+#### **ldxa**
+
+Extended memory loads using the `Accumulator` as an intermediate register (destroying its contents):
+
+```asm
+; ld  a,[hli]
+; ld  R,a
+ldxa  b,[hli]
+ldxa  c,[hli]
+ldxa  d,[hli]
+ldxa  e,[hli]
+ldxa  h,[hli]
+ldxa  l,[hli]
+
+; ld  a,[hld]
+; ld  R,a
+ldxa  b,[hld]
+ldxa  c,[hld]
+ldxa  d,[hld]
+ldxa  e,[hld]
+ldxa  h,[hld]
+ldxa  l,[hld]
+
+; ld  a,R
+; ld  [hli],a
+ldxa  [hli],b
+ldxa  [hli],c
+ldxa  [hli],d
+ldxa  [hli],e
+ldxa  [hli],h
+ldxa  [hli],l
+
+; ld   a,R
+; ld   [hld],a
+ldxa  [hld],b
+ldxa  [hld],c
+ldxa  [hld],d
+ldxa  [hld],e
+ldxa  [hld],h
+ldxa  [hld],l
+
+; ld  a,$ff
+; ld  [$0000],a
+ldxa  [$0000],$ff
+
+; ld  a,R
+; ld  [$0000],a
+ldxa  [$0000],b
+ldxa  [$0000],c
+ldxa  [$0000],d
+ldxa  [$0000],e
+ldxa  [$0000],h
+ldxa  [$0000],l
+
+; ld  a,[hli]
+; ld  [$0000],a
+ldxa  [$0000],[hli]
+
+; ld  a,[hld]
+; ld  [$0000],a
+ldxa  [$0000],[hld]
+
+; ld  a,[$0000]
+; ld  [$0000],a
+ldxa  [$0000],[$0000]
+
+; ld  a,[$0000]
+; ld  R,a
+ldxa  b,[$0000]
+ldxa  c,[$0000]
+ldxa  d,[$0000]
+ldxa  e,[$0000]
+ldxa  h,[$0000]
+ldxa  l,[$0000]
+
+; ld  a,[$0000]
+; ld  [hli],a
+ldxa  [hli],[$0000]
+
+; ld  a,[$0000]
+; ld  [hld],a
+ldxa  [hld],[$0000]
+```
 
 ## License
 
