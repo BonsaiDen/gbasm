@@ -133,6 +133,31 @@ are parsed before resolving any names or sizes.
 
 These aim at increasing the readability of the source.
 
+#### **addw**
+
+Adds a 8-bit operand to a 16-bit register using only the `Accumulator`:
+
+```asm
+; ld      a,$ff
+; add     a,l
+; ld      l,a
+; adc     a,h
+; sub     l
+; ld      h,a
+addw  hl,$ff
+addw  bc,$ff
+addw  de,$ff
+
+; add     a,l
+; ld      l,a
+; adc     a,h
+; sub     l
+; ld      h,a
+addw  hl,a
+addw  bc,a
+addw  de,a
+```
+
 #### **ldxa**
 
 Extended memory loads using the `Accumulator` as an intermediate register (destroying its contents):
@@ -216,6 +241,8 @@ ldxa  [hli],[$0000]
 ; ld  [hld],a
 ldxa  [hld],[$0000]
 ```
+
+
 
 ## License
 
