@@ -1,13 +1,13 @@
 // Dependencies ---------------------------------------------------------------
 // ----------------------------------------------------------------------------
-var fs = require('fs'),
+const fs = require('fs'),
     path = require('path'),
     Compiler = require('./lib/Compiler');
 
 
 // Command Line Interface------------------------------------------------------
 // ----------------------------------------------------------------------------
-var args = process.argv.slice(2),
+const args = process.argv.slice(2),
     options = {
         outfile: 'game.gb',
         optimize: false,
@@ -24,8 +24,8 @@ var args = process.argv.slice(2),
         files: []
     };
 
-for(var i = 0, l = args.length; i < l; i++) {
-    var arg = args[i];
+for(let i = 0, l = args.length; i < l; i++) {
+    const arg = args[i];
     switch(arg) {
         case '-o':
         case '--outfile':
@@ -89,7 +89,7 @@ for(var i = 0, l = args.length; i < l; i++) {
 
         default:
             if (arg.substring(0, 1) === '-') {
-                error('Unknown option: ' + arg);
+                error(`Unknown option: ${arg}`);
 
             } else {
                 options.files.push(arg);
@@ -102,10 +102,10 @@ for(var i = 0, l = args.length; i < l; i++) {
 // Version Information
 if (options.version) {
 
-    var p = path.join(__dirname, 'package.json'),
+    const p = path.join(__dirname, 'package.json'),
         version = JSON.parse(fs.readFileSync(p).toString()).version;
 
-    process.stdout.write('v' + version + '\n');
+    process.stdout.write(`v${version}\n`);
 
 // Display Help
 } else if (options.help) {
@@ -119,7 +119,7 @@ if (options.version) {
 } else if (options.files.length) {
 
     // Compile
-    var c = new Compiler(options.silent, options.verbose, options.debug);
+    const c = new Compiler(options.silent, options.verbose, options.debug);
     c.compile(options.files, !options.optimize);
 
     // Optimize
@@ -178,15 +178,13 @@ if (options.version) {
 
 // Helpers --------------------------------------------------------------------
 function getString(name, args, index) {
-
-    var s = args[index];
+    const s = args[index];
     if (s === undefined || s.substring(0, 1) === '-') {
-        error('Expected string argument for ' + name);
+        error(`Expected string argument for ${name}`);
 
     } else {
         return s;
     }
-
 }
 
 function usage() {
@@ -200,17 +198,18 @@ function usage() {
         '   --symfile, -s <s>: Generates a symbol map compatible with debuggers',
         '  --jsonfile, -j <s>: Generates a JSON data dump of all sections with their data, labels, instructions etc.',
         '        --silent, -S: Surpresses all logging',
-        '         --debug, -d: Enable support for custom "msg" debug opcodes',
+        '         --debug, -d: Enable support for custom "msg" and "brk" debug opcodes for use with BGB',
         '            --unused: Report unused labels and variables',
         '          --info <s>: Parse the input string and return byte count and cycles information',
         '       --verbose, -v: Turn on verbose logging',
         '           --version: Displays version information',
-        '              --help: Displays this help text'
-    ].join('\n') + '\n');
+        '              --help: Displays this help text',
+        ''
+    ].join('\n'));
 }
 
 function error(message) {
-    process.stderr.write('Error: ' + message + '\n');
+    process.stderr.write(`Error: ${message}\n`);
     process.exit(1);
 }
 
