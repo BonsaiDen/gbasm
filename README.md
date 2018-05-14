@@ -158,6 +158,28 @@ addw  bc,a
 addw  de,a
 ```
 
+#### **incx**
+
+Extended increment of a memory address, using the `Accumulator` as an intermediate register (destroying its contents):
+
+```asm
+; ld a,[$0000]
+; inc a
+; ld [$0000],a
+incx [$0000]
+```
+
+#### **decx**
+
+Extended decrement of a memory address, using the `Accumulator` as an intermediate register (destroying its contents):
+
+```asm
+; ld a,[$0000]
+; dec a
+; ld [$0000],a
+decx [$0000]
+```
+
 #### **ldxa**
 
 Extended memory loads using the `Accumulator` as an intermediate register (destroying its contents):
@@ -203,6 +225,14 @@ ldxa  [hld],l
 ; ld  [$0000],a
 ldxa  [$0000],$ff
 
+; ld  a,$ff
+; ld  [hli],a
+ldxa  [hli],$ff
+
+; ld  a,$ff
+; ld  [hld],a
+ldxa  [hld],$ff
+
 ; ld  a,R
 ; ld  [$0000],a
 ldxa  [$0000],b
@@ -241,7 +271,6 @@ ldxa  [hli],[$0000]
 ; ld  [hld],a
 ldxa  [hld],[$0000]
 ```
-
 
 
 ## License
