@@ -156,6 +156,16 @@ addw  de,$ff
 addw  hl,a
 addw  bc,a
 addw  de,a
+
+; ld      a,reg
+; add     a,l
+; ld      l,a
+; adc     a,h
+; sub     l
+; ld      h,a
+addw  hl,reg
+addw  bc,reg
+addw  de,reg
 ```
 
 #### **incx**
